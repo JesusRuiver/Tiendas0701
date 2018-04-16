@@ -18,7 +18,7 @@ import java.awt.event.ActionEvent;
 public class Principal extends JFrame {
 
 	private JPanel contentPane;
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -40,6 +40,7 @@ public class Principal extends JFrame {
 	 * Create the frame.
 	 */
 	public Principal() {
+				
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 225, 275);

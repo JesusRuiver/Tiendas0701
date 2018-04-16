@@ -51,61 +51,75 @@ public class Ejercicio3 extends JFrame {
 		miConexion.conectar();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 536, 410);
+		setBounds(100, 100, 721, 415);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(26, 34, 230, 308);
+		scrollPane.setBounds(26, 34, 294, 308);
 		contentPane.add(scrollPane);
 		
 		JList listTiendas = new JList();
 		scrollPane.setViewportView(listTiendas);
 		
 		JComboBox cboxArticulos = new JComboBox();
-		cboxArticulos.setBounds(279, 31, 199, 20);
+		cboxArticulos.setBounds(379, 34, 267, 20);
 		contentPane.add(cboxArticulos);
 		
 		JSpinner spinner = new JSpinner();
-		spinner.setBounds(371, 88, 107, 20);
+		spinner.setBounds(539, 91, 107, 20);
 		contentPane.add(spinner);
 		
 		JSpinner spinner_1 = new JSpinner();
-		spinner_1.setBounds(371, 150, 107, 20);
+		spinner_1.setBounds(539, 153, 107, 20);
 		contentPane.add(spinner_1);
 		
 		textField = new JTextField();
-		textField.setBounds(371, 220, 107, 20);
+		textField.setBounds(539, 223, 107, 20);
 		contentPane.add(textField);
 		textField.setColumns(10);
 		
 		textField_1 = new JTextField();
 		textField_1.setColumns(10);
-		textField_1.setBounds(371, 270, 107, 20);
+		textField_1.setBounds(539, 273, 107, 20);
 		contentPane.add(textField_1);
 		
 		JLabel lbPeso = new JLabel("Peso");
-		lbPeso.setBounds(279, 91, 46, 14);
+		lbPeso.setBounds(447, 94, 46, 14);
 		contentPane.add(lbPeso);
 		
 		JLabel lbunidades = new JLabel("Unidades");
-		lbunidades.setBounds(279, 153, 46, 14);
+		lbunidades.setBounds(447, 156, 46, 14);
 		contentPane.add(lbunidades);
 		
 		JLabel lbFecha = new JLabel("Fecha");
-		lbFecha.setBounds(279, 223, 46, 14);
+		lbFecha.setBounds(447, 226, 46, 14);
 		contentPane.add(lbFecha);
 		
 		JLabel lbCategoria = new JLabel("Categoria");
-		lbCategoria.setBounds(277, 273, 64, 14);
+		lbCategoria.setBounds(445, 276, 64, 14);
 		contentPane.add(lbCategoria);
 		
 		JButton btnInsertarArticulo = new JButton("Insertar");
-		btnInsertarArticulo.setBounds(389, 324, 89, 23);
+		btnInsertarArticulo.setBounds(557, 327, 89, 23);
 		contentPane.add(btnInsertarArticulo);
 		
+		rellenaLista(listTiendas);
+		
+		ArrayList<String> articulos = new ArrayList<String>();
+		
+		articulos = miConexion.rellenaComboBoxArticulos();
+		
+		for(int i = 0; i < articulos.size(); i++){
+			
+			cboxArticulos.addItem(articulos.get(i));
+		}
+		
+	}
+
+	private void rellenaLista(JList listTiendas) {
 		DefaultListModel<String> modeloLista = new DefaultListModel<String>();
 		
 		ArrayList<String> datos = new ArrayList<String>();
@@ -117,6 +131,5 @@ public class Ejercicio3 extends JFrame {
 		}
 		
 		listTiendas.setModel(modeloLista);
-		
 	}
 }

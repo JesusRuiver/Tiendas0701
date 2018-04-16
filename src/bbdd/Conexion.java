@@ -117,6 +117,31 @@ public class Conexion {
 		return lista;
 
 	}
+	
+	public ArrayList<String> rellenaComboBoxArticulos() {
+
+		ArrayList<String> lista = new ArrayList<String>();
+		String consulta = "SELECT * FROM articulos";
+		try {
+			resultado = this.sentencia.executeQuery(consulta);
+			System.out.println("Correcto");
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("Error");
+		}
+
+		try {
+			while (resultado.next()) {
+
+				lista.add("ARTICULO: " + resultado.getString(1) + " FABRICANTE: " + resultado.getString(2));
+			}
+			resultado.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return lista;
+
+	}
 
 	public ArrayList<Object[]> rellenaTabla() {
 		ArrayList<Object[]> datos = new ArrayList<Object[]>();
