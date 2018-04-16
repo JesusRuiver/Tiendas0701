@@ -57,15 +57,15 @@ public class Principal extends JFrame {
 				ejercicio1.setVisible(true);
 			}
 		});
-		btnEjercicio1.setBounds(64, 93, 89, 23);
+		btnEjercicio1.setBounds(48, 92, 124, 23);
 		contentPane.add(btnEjercicio1);
 
 		JButton btnEjercicio2 = new JButton("Ejercicio 2");
-		btnEjercicio2.setBounds(64, 143, 89, 23);
+		btnEjercicio2.setBounds(48, 141, 124, 23);
 		contentPane.add(btnEjercicio2);
 
 		JButton btnEjercicio3 = new JButton("Ejercicio 3");
-		btnEjercicio3.setBounds(64, 196, 89, 23);
+		btnEjercicio3.setBounds(48, 194, 124, 23);
 		contentPane.add(btnEjercicio3);
 
 		JLabel lbTituloPractica = new JLabel("Pr\u00E1ctica 1");
