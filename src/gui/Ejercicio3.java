@@ -124,7 +124,7 @@ public class Ejercicio3 extends JFrame {
 		
 		ArrayList<String> datos = new ArrayList<String>();
 		
-		datos = miConexion.rellenaComboBox();
+		datos = miConexion.rellenaComboBoxTiendas();
 		
 		for (int i = 0; i<datos.size();i++){
 			modeloLista.addElement(datos.get(i));

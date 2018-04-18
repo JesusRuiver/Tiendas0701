@@ -85,7 +85,7 @@ public class Ejercicio2 extends JFrame {
 		
 		ArrayList<String> lista = new ArrayList<String>();
 		
-		lista = miConexion.rellenaComboBox();
+		lista = miConexion.rellenaComboBoxTiendas();
 		
 		for (int i = 0; i < lista.size(); i++){
 			cboxTiendas.addItem(lista.get(i));

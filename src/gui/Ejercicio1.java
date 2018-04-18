@@ -1,37 +1,33 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import bbdd.Conexion;
-
-import javax.swing.JComboBox;
-import javax.swing.JRadioButton;
-import javax.swing.JTable;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
-import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class Ejercicio1 extends JFrame {
 
 	private JPanel contentPane;
 	private JTable tablaArticulos;
 	private JLabel lbResultadoTotal = new JLabel("");
-	private Conexion miConexion = new Conexion();
+
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+
+	private Conexion miConexion = new Conexion();
 
 	/**
 	 * Launch the application.
@@ -64,11 +60,12 @@ public class Ejercicio1 extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JComboBox cboxTiendas = new JComboBox();
+		JComboBox<String> cboxTiendas = new JComboBox<String>();
 		cboxTiendas.setBounds(33, 22, 262, 26);
 		contentPane.add(cboxTiendas);
 
 		JRadioButton rbtnVentas = new JRadioButton("Ventas");
+		rbtnVentas.setSelected(true);
 		rbtnVentas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -104,46 +101,59 @@ public class Ejercicio1 extends JFrame {
 		lbResultadoTotal.setBounds(378, 480, 351, 14);
 		contentPane.add(lbResultadoTotal);
 
-		rellenaTablaArticulos();
-
 		rellenaComboBox(cboxTiendas);
 
-	}
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(33, 127, 700, 334);
+		contentPane.add(scrollPane);
 
-	public void rellenaTablaArticulos() {
 		DefaultTableModel modelo = new DefaultTableModel();
 
+		modelo.addColumn("NIF");
 		modelo.addColumn("ARTICULO");
 		modelo.addColumn("FABRICANTE");
 		modelo.addColumn("PESO");
 		modelo.addColumn("CATEGORIA");
-		modelo.addColumn("PRECIO");
-		modelo.addColumn("PRECIO COSTO");
-		modelo.addColumn("EXISTENCIAS");
+		modelo.addColumn("FECHA DE VENTA");
+		modelo.addColumn("UNIDADES");
 
-		ArrayList<Object[]> datos = new ArrayList<Object[]>();
+		tablaArticulos = new JTable(modelo);
+		scrollPane.setViewportView(tablaArticulos);
 
-		datos = miConexion.rellenaTabla();
+		cboxTiendas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 
-		for (int i = 0; i < datos.size(); i++) {
+				modelo.setRowCount(0); // Borra lo que hay en la tabla
+				String nif = troceaNIF(cboxTiendas).trim();
+				ArrayList<Object[]> datos = new ArrayList<Object[]>();
+						datos = miConexion.rellenaTablaVentas(nif);
+				for (int i = 0; i < datos.size(); i++) {
+					modelo.addRow(datos.get(i));
+				}
 
-			modelo.addRow(datos.get(i));
-		}
+			}
 
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(34, 139, 695, 313);
-		contentPane.add(scrollPane_1);
+		});
 
-		tablaArticulos = new JTable();
-		scrollPane_1.setViewportView(tablaArticulos);
-
-		this.tablaArticulos.setModel(modelo);
 	}
 
-	public void rellenaComboBox(JComboBox cboxTiendas) {
+	public String troceaNIF(JComboBox cboxTiendas) {
+
+		String tiendaYnif;
+
+		tiendaYnif = cboxTiendas.getSelectedItem().toString().trim();
+
+		String[] parteNif = tiendaYnif.trim().split(": ");
+
+		String nif = parteNif[2];
+
+		return nif;
+	}
+
+	public void rellenaComboBox(JComboBox<String> cboxTiendas) {
 		ArrayList<String> lista = new ArrayList<String>();
 
-		lista = miConexion.rellenaComboBox();
+		lista = miConexion.rellenaComboBoxTiendas();
 
 		for (int i = 0; i < lista.size(); i++) {
 			cboxTiendas.addItem(lista.get(i));

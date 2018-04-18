@@ -2,10 +2,12 @@ package bbdd;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
 
 public class Conexion {
 
@@ -19,6 +21,10 @@ public class Conexion {
 	private ResultSet resultado;
 	private Statement sentencia;
 
+	private PreparedStatement enviaConsultaArticulosVentas;
+	private String consultaPreparadaArticulosVentas = "Select * from ventas where nif=?";
+
+	
 	public Conexion() {
 
 	}
@@ -93,13 +99,16 @@ public class Conexion {
 		}
 	}
 
-	public ArrayList<String> rellenaComboBox() {
+	public ArrayList<String> rellenaComboBoxTiendas() {
 
 		ArrayList<String> lista = new ArrayList<String>();
 		String consulta = "SELECT * FROM tiendas";
+
 		try {
 			resultado = this.sentencia.executeQuery(consulta);
+
 			System.out.println("Correcto");
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("Error");
@@ -117,7 +126,7 @@ public class Conexion {
 		return lista;
 
 	}
-	
+
 	public ArrayList<String> rellenaComboBoxArticulos() {
 
 		ArrayList<String> lista = new ArrayList<String>();
@@ -143,9 +152,46 @@ public class Conexion {
 
 	}
 
-	public ArrayList<Object[]> rellenaTabla() {
+	public ArrayList<Object[]> rellenaTablaVentas(String nif) {
+		
 		ArrayList<Object[]> datos = new ArrayList<Object[]>();
-		String consulta = "SELECT * FROM ARTICULOS";
+
+		try {
+			
+			enviaConsultaArticulosVentas = conexion.prepareStatement(consultaPreparadaArticulosVentas);
+			enviaConsultaArticulosVentas.setString(1, nif);
+
+			resultado = enviaConsultaArticulosVentas.executeQuery();
+			
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {
+			while (resultado.next()) {
+
+				Object[] filas = new Object[7];
+
+				for (int i = 0; i < 7; i++) {
+
+					filas[i] = resultado.getObject(i + 1);
+
+				}
+				datos.add(filas);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return datos;
+
+	}
+
+	public ArrayList<Object[]> rellenaTablaPedidos() {
+		ArrayList<Object[]> datos = new ArrayList<Object[]>();
+		String consulta = "SELECT * FROM pedidos";
 
 		try {
 			resultado = sentencia.executeQuery(consulta);
@@ -181,15 +227,15 @@ public class Conexion {
 		String total = "";
 		try {
 			resultado = sentencia.executeQuery(consulta);
-			
-			if(resultado.next()){
+
+			if (resultado.next()) {
 				total = resultado.getString("sumaPrecioCosto");
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return total;
 	}
 
