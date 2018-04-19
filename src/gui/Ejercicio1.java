@@ -94,7 +94,7 @@ public class Ejercicio1 extends JFrame {
 
 		/*---------------------------------ACCIONES DE LOS BOTONES----------------------*/
 
-		// Primero rellenamos el comboBox
+		// Primero rellenamos el comboBox de Tiendas con NIF
 
 		rellenaComboBox(cboxTiendas);
 
