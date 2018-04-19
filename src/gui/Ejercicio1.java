@@ -103,20 +103,7 @@ public class Ejercicio1 extends JFrame {
 		cboxTiendas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				// Creamos un modelos contruyendolo a traves de nuestro metodo
-				// construyeModeloTablaArticulos
-
-				DefaultTableModel modelo = construyeModeloTablaArticulos(scrollPane);
-
-				modelo.setRowCount(0); // Borra lo que hay en la tabla
-
-				// Almacenamos el string obtenido de nuestro metodo troceaNIF
-
-				String nif = troceaNIF(cboxTiendas).trim();
-				
-				// Rellenamos la tabla pasandole el modelo y el strig almacenado
-
-				rellenaTablaArticulosSeleccionandoNIF(modelo, nif);
+				accionComboBox(cboxTiendas, scrollPane);
 
 			}
 
@@ -195,5 +182,29 @@ public class Ejercicio1 extends JFrame {
 		for (int i = 0; i < lista.size(); i++) {
 			cboxTiendas.addItem(lista.get(i));
 		}
+	}
+
+	/**
+	 * Acción del ComboBox, trocea el String para obtener un nif y se lo pasa a
+	 * una consulta preparada para optener articulos por nif de tienda
+	 * 
+	 * @param cboxTiendas
+	 * @param scrollPane
+	 */
+	private void accionComboBox(JComboBox<String> cboxTiendas, JScrollPane scrollPane) {
+		// Creamos un modelos contruyendolo a traves de nuestro metodo
+		// construyeModeloTablaArticulos
+
+		DefaultTableModel modelo = construyeModeloTablaArticulos(scrollPane);
+
+		modelo.setRowCount(0); // Borra lo que hay en la tabla
+
+		// Almacenamos el string obtenido de nuestro metodo troceaNIF
+
+		String nif = troceaNIF(cboxTiendas).trim();
+
+		// Rellenamos la tabla pasandole el modelo y el strig almacenado
+
+		rellenaTablaArticulosSeleccionandoNIF(modelo, nif);
 	}
 }
