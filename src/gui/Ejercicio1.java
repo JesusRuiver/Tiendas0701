@@ -47,14 +47,16 @@ public class Ejercicio1 extends JFrame {
 	}
 
 	/**
-	 * Create the frame.
+	 * Create the frame. //Constructor de la Ventana
 	 */
 	public Ejercicio1() {
 
 		miConexion.conectar();
 
+		/*------------------------COMPONENTES DE LA VENTANA----------------------------*/
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 776, 563);
+		setBounds(100, 100, 853, 586);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -66,6 +68,60 @@ public class Ejercicio1 extends JFrame {
 
 		JRadioButton rbtnVentas = new JRadioButton("Ventas");
 		rbtnVentas.setSelected(true);
+
+		JRadioButton rbtnPedidos = new JRadioButton("Pedidos");
+
+		buttonGroup.add(rbtnVentas);
+		rbtnVentas.setBounds(65, 66, 77, 23);
+		contentPane.add(rbtnVentas);
+
+		buttonGroup.add(rbtnPedidos);
+		rbtnPedidos.setBounds(65, 92, 77, 23);
+		contentPane.add(rbtnPedidos);
+
+		JLabel lbTotal = new JLabel("Total:");
+		lbTotal.setFont(new Font("Arial", Font.BOLD, 15));
+		lbTotal.setBounds(330, 512, 46, 14);
+		contentPane.add(lbTotal);
+		lbResultadoTotal.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+		lbResultadoTotal.setBounds(378, 480, 351, 14);
+		contentPane.add(lbResultadoTotal);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(33, 127, 775, 353);
+		contentPane.add(scrollPane);
+
+		/*---------------------------------ACCIONES DE LOS BOTONES----------------------*/
+
+		// Primero rellenamos el comboBox
+
+		rellenaComboBox(cboxTiendas);
+
+		// Accion a la hora de seleccionar en el comboBox
+
+		cboxTiendas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				// Creamos un modelos contruyendolo a traves de nuestro metodo
+				// construyeModeloTablaArticulos
+
+				DefaultTableModel modelo = construyeModeloTablaArticulos(scrollPane);
+
+				modelo.setRowCount(0); // Borra lo que hay en la tabla
+
+				// Almacenamos el string obtenido de nuestro metodo troceaNIF
+
+				String nif = troceaNIF(cboxTiendas).trim();
+				
+				// Rellenamos la tabla pasandole el modelo y el strig almacenado
+
+				rellenaTablaArticulosSeleccionandoNIF(modelo, nif);
+
+			}
+
+		});
+
 		rbtnVentas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -75,11 +131,7 @@ public class Ejercicio1 extends JFrame {
 
 			}
 		});
-		buttonGroup.add(rbtnVentas);
-		rbtnVentas.setBounds(65, 66, 77, 23);
-		contentPane.add(rbtnVentas);
 
-		JRadioButton rbtnPedidos = new JRadioButton("Pedidos");
 		rbtnPedidos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -88,24 +140,12 @@ public class Ejercicio1 extends JFrame {
 				lbResultadoTotal.setText(total + " Precio de costo");
 			}
 		});
-		buttonGroup.add(rbtnPedidos);
-		rbtnPedidos.setBounds(65, 92, 77, 23);
-		contentPane.add(rbtnPedidos);
 
-		JLabel lbTotal = new JLabel("Total:");
-		lbTotal.setFont(new Font("Arial", Font.BOLD, 15));
-		lbTotal.setBounds(325, 480, 46, 14);
-		contentPane.add(lbTotal);
-		lbResultadoTotal.setFont(new Font("Tahoma", Font.PLAIN, 14));
+	}
 
-		lbResultadoTotal.setBounds(378, 480, 351, 14);
-		contentPane.add(lbResultadoTotal);
+	/*-------------------------------------METODOS-----------------------------------*/
 
-		rellenaComboBox(cboxTiendas);
-
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(33, 127, 700, 334);
-		contentPane.add(scrollPane);
+	private DefaultTableModel construyeModeloTablaArticulos(JScrollPane scrollPane) {
 
 		DefaultTableModel modelo = new DefaultTableModel();
 
@@ -120,21 +160,18 @@ public class Ejercicio1 extends JFrame {
 		tablaArticulos = new JTable(modelo);
 		scrollPane.setViewportView(tablaArticulos);
 
-		cboxTiendas.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		return modelo;
+	}
 
-				modelo.setRowCount(0); // Borra lo que hay en la tabla
-				String nif = troceaNIF(cboxTiendas).trim();
-				ArrayList<Object[]> datos = new ArrayList<Object[]>();
-						datos = miConexion.rellenaTablaVentas(nif);
-				for (int i = 0; i < datos.size(); i++) {
-					modelo.addRow(datos.get(i));
-				}
+	private void rellenaTablaArticulosSeleccionandoNIF(DefaultTableModel modelo, String nif) {
 
-			}
+		ArrayList<Object[]> datos = new ArrayList<Object[]>();
 
-		});
+		datos = miConexion.rellenaTablaVentas(nif);
 
+		for (int i = 0; i < datos.size(); i++) {
+			modelo.addRow(datos.get(i));
+		}
 	}
 
 	public String troceaNIF(JComboBox cboxTiendas) {
