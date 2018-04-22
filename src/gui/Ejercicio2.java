@@ -1,12 +1,16 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import bbdd.Conexion;
 
@@ -19,6 +23,8 @@ public class Ejercicio2 extends JFrame {
 
 	private JPanel contentPane;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+	
+	private ArrayList<Object[]> datos = new ArrayList<Object[]>();
 
 	private Conexion miConexion = new Conexion();
 
@@ -69,6 +75,7 @@ public class Ejercicio2 extends JFrame {
 		contentPane.add(rbtnPedidos);
 
 		JButton btnExportarBinarioSecuencial = new JButton("Exportar Fichero Binario");
+
 		btnExportarBinarioSecuencial.setBounds(133, 148, 181, 23);
 		contentPane.add(btnExportarBinarioSecuencial);
 
@@ -85,13 +92,61 @@ public class Ejercicio2 extends JFrame {
 		contentPane.add(btnImportarFicheroXML);
 
 		// Primero rellenamos el comboBox de Tiendas con NIF
-		
+
 		rellenaComboBox(cboxTiendas);
-		
+
 		/*---------------------------------ACCIONES DE LOS BOTONES----------------------*/
-		
-		
-		
+
+		rbtnVentas.setSelected(true);
+
+		String nif = troceaNIF(cboxTiendas);
+
+		miConexion.rellenaTablaVentas(nif);
+
+		rbtnVentas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				
+				String nif = troceaNIF(cboxTiendas);
+
+				datos = miConexion.rellenaTablaVentas(nif);
+				
+				btnExportarBinarioSecuencial.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+
+						
+
+						try {
+							FileOutputStream fileout = miConexion.exportarFicheroBinario();
+
+							for (int i = 0; i < datos.size(); i++) {
+								System.out.println(datos.get(i));
+								//fileout.(datos.get(i));
+							}
+
+							fileout.close();
+
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+
+					}
+				});
+
+			}
+		});
+
+		rbtnPedidos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				String nif = troceaNIF(cboxTiendas);
+
+				miConexion.rellenaTablaPedidos(nif);
+
+				
+			}
+		});
 
 	}
 
@@ -105,5 +160,18 @@ public class Ejercicio2 extends JFrame {
 		for (int i = 0; i < lista.size(); i++) {
 			cboxTiendas.addItem(lista.get(i));
 		}
+	}
+
+	public String troceaNIF(JComboBox cboxTiendas) {
+
+		String tiendaYnif;
+
+		tiendaYnif = cboxTiendas.getSelectedItem().toString().trim();
+
+		String[] parteNif = tiendaYnif.trim().split(": ");
+
+		String nif = parteNif[2];
+
+		return nif;
 	}
 }

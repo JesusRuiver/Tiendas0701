@@ -1,5 +1,10 @@
 package bbdd;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.swing.JComboBox;
 
 public class Conexion {
 
@@ -23,11 +29,10 @@ public class Conexion {
 
 	private PreparedStatement enviaConsultaArticulosVentas;
 	private String consultaPreparadaArticulosVentas = "Select * from ventas where nif=?";
-	
+
 	private PreparedStatement enviaConsultaArticulosPedidos;
 	private String consultaPreparadaArticulosPedidos = "Select * from pedidos where nif=?";
 
-	
 	public Conexion() {
 
 	}
@@ -156,16 +161,15 @@ public class Conexion {
 	}
 
 	public ArrayList<Object[]> rellenaTablaVentas(String nif) {
-		
+
 		ArrayList<Object[]> datos = new ArrayList<Object[]>();
 
 		try {
-			
+
 			enviaConsultaArticulosVentas = conexion.prepareStatement(consultaPreparadaArticulosVentas);
 			enviaConsultaArticulosVentas.setString(1, nif);
 
 			resultado = enviaConsultaArticulosVentas.executeQuery();
-			
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -191,18 +195,17 @@ public class Conexion {
 		return datos;
 
 	}
-	
-public ArrayList<Object[]> rellenaTablaPedidos(String nif) {
-		
+
+	public ArrayList<Object[]> rellenaTablaPedidos(String nif) {
+
 		ArrayList<Object[]> datos = new ArrayList<Object[]>();
 
 		try {
-			
+
 			enviaConsultaArticulosPedidos = conexion.prepareStatement(consultaPreparadaArticulosPedidos);
 			enviaConsultaArticulosPedidos.setString(1, nif);
 
 			resultado = enviaConsultaArticulosPedidos.executeQuery();
-			
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -228,7 +231,6 @@ public ArrayList<Object[]> rellenaTablaPedidos(String nif) {
 		return datos;
 
 	}
-
 
 	public ArrayList<Object[]> rellenaTablaPedidos() {
 		ArrayList<Object[]> datos = new ArrayList<Object[]>();
@@ -296,6 +298,16 @@ public ArrayList<Object[]> rellenaTablaPedidos(String nif) {
 			e.printStackTrace();
 		}
 		return total;
+	}
+
+	public FileOutputStream exportarFicheroBinario() throws IOException {
+
+		File fichero = new File("FicheroBinaro.dat");
+
+		FileOutputStream fileout = new FileOutputStream(fichero);
+
+		return fileout;
+
 	}
 
 	public Connection getConexion() {
