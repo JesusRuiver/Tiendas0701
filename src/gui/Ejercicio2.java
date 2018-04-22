@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -23,7 +24,7 @@ public class Ejercicio2 extends JFrame {
 
 	private JPanel contentPane;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
-	
+
 	private ArrayList<Object[]> datos = new ArrayList<Object[]>();
 
 	private Conexion miConexion = new Conexion();
@@ -97,31 +98,23 @@ public class Ejercicio2 extends JFrame {
 
 		/*---------------------------------ACCIONES DE LOS BOTONES----------------------*/
 
-		rbtnVentas.setSelected(true);
-
-		String nif = troceaNIF(cboxTiendas);
-
-		miConexion.rellenaTablaVentas(nif);
-
 		rbtnVentas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				
+
 				String nif = troceaNIF(cboxTiendas);
 
 				datos = miConexion.rellenaTablaVentas(nif);
-				
+
+
 				btnExportarBinarioSecuencial.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 
-						
-
 						try {
-							FileOutputStream fileout = miConexion.exportarFicheroBinario();
+							ObjectOutputStream fileout = miConexion.exportarFicheroBinario();
 
 							for (int i = 0; i < datos.size(); i++) {
-								System.out.println(datos.get(i));
-								//fileout.(datos.get(i));
+								
+								fileout.writeObject(datos.get(i));
 							}
 
 							fileout.close();
@@ -144,7 +137,6 @@ public class Ejercicio2 extends JFrame {
 
 				miConexion.rellenaTablaPedidos(nif);
 
-				
 			}
 		});
 
