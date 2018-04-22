@@ -23,6 +23,9 @@ public class Conexion {
 
 	private PreparedStatement enviaConsultaArticulosVentas;
 	private String consultaPreparadaArticulosVentas = "Select * from ventas where nif=?";
+	
+	private PreparedStatement enviaConsultaArticulosPedidos;
+	private String consultaPreparadaArticulosPedidos = "Select * from pedidos where nif=?";
 
 	
 	public Conexion() {
@@ -188,6 +191,44 @@ public class Conexion {
 		return datos;
 
 	}
+	
+public ArrayList<Object[]> rellenaTablaPedidos(String nif) {
+		
+		ArrayList<Object[]> datos = new ArrayList<Object[]>();
+
+		try {
+			
+			enviaConsultaArticulosPedidos = conexion.prepareStatement(consultaPreparadaArticulosPedidos);
+			enviaConsultaArticulosPedidos.setString(1, nif);
+
+			resultado = enviaConsultaArticulosPedidos.executeQuery();
+			
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {
+			while (resultado.next()) {
+
+				Object[] filas = new Object[7];
+
+				for (int i = 0; i < 7; i++) {
+
+					filas[i] = resultado.getObject(i + 1);
+
+				}
+				datos.add(filas);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return datos;
+
+	}
+
 
 	public ArrayList<Object[]> rellenaTablaPedidos() {
 		ArrayList<Object[]> datos = new ArrayList<Object[]>();

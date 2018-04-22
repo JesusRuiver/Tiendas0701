@@ -22,10 +22,14 @@ import bbdd.Conexion;
 public class Ejercicio1 extends JFrame {
 
 	private JPanel contentPane;
-	private JTable tablaArticulos;
+	private JTable tablaVentas;
+	private JTable tablaPedidos;
 	private JLabel lbResultadoTotal = new JLabel("");
 
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+
+	private JRadioButton rbtnVentas = new JRadioButton("Ventas");
+	private JRadioButton rbtnPedidos = new JRadioButton("Pedidos");
 
 	private Conexion miConexion = new Conexion();
 
@@ -66,16 +70,13 @@ public class Ejercicio1 extends JFrame {
 		cboxTiendas.setBounds(33, 22, 262, 26);
 		contentPane.add(cboxTiendas);
 
-		JRadioButton rbtnVentas = new JRadioButton("Ventas");
-		rbtnVentas.setSelected(true);
-
-		JRadioButton rbtnPedidos = new JRadioButton("Pedidos");
-
 		buttonGroup.add(rbtnVentas);
+
 		rbtnVentas.setBounds(65, 66, 77, 23);
 		contentPane.add(rbtnVentas);
 
 		buttonGroup.add(rbtnPedidos);
+
 		rbtnPedidos.setBounds(65, 92, 77, 23);
 		contentPane.add(rbtnPedidos);
 
@@ -98,41 +99,65 @@ public class Ejercicio1 extends JFrame {
 
 		rellenaComboBox(cboxTiendas);
 
-		// Accion a la hora de seleccionar en el comboBox
+		// Antes de accionar el combobox
 
-		cboxTiendas.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		// Inicializamos en radiobuton de ventas seleccionado y construimos la tabla de ventas
 
-				accionComboBox(cboxTiendas, scrollPane);
+		rbtnVentas.setSelected(true);
 
-			}
+		String nif = troceaNIF(cboxTiendas);
 
-		});
+		DefaultTableModel modelo = construyeModeloTablaArticulosVentas(scrollPane);
+
+		rellenaTablaArticulosVentasSeleccionandoNIF(modelo, nif);
 
 		rbtnVentas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				String total = miConexion.sumaPrecioVenta();
+				String nif = troceaNIF(cboxTiendas);
 
-				lbResultadoTotal.setText(total + " Precio Venta al Publico");
+				DefaultTableModel modelo = construyeModeloTablaArticulosVentas(scrollPane);
+
+				rellenaTablaArticulosVentasSeleccionandoNIF(modelo, nif);
 
 			}
 		});
 
 		rbtnPedidos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				String nif = troceaNIF(cboxTiendas);
+
+				DefaultTableModel modelo = construyeModeloTablaArticulosPedidos(scrollPane);
+
+				rellenaTablaArticulosPedidosSeleccionandoNIF(modelo, nif);
+
+			}
+		});
+
+		// Accion a la hora de seleccionar en el comboBox
+
+		cboxTiendas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				String total = miConexion.sumaPrecioCosto();
+				if (rbtnVentas.isSelected() == true) {
 
-				lbResultadoTotal.setText(total + " Precio de costo");
+					accionComboBoxVentasSeleccionado(cboxTiendas, scrollPane);
+
+				} else {
+
+					accionComboBoxPedidosSeleccionado(cboxTiendas, scrollPane);
+				}
+
 			}
+
 		});
 
 	}
 
 	/*-------------------------------------METODOS-----------------------------------*/
 
-	private DefaultTableModel construyeModeloTablaArticulos(JScrollPane scrollPane) {
+	private DefaultTableModel construyeModeloTablaArticulosVentas(JScrollPane scrollPane) {
 
 		DefaultTableModel modelo = new DefaultTableModel();
 
@@ -141,20 +166,49 @@ public class Ejercicio1 extends JFrame {
 		modelo.addColumn("FABRICANTE");
 		modelo.addColumn("PESO");
 		modelo.addColumn("CATEGORIA");
-		modelo.addColumn("FECHA DE VENTA");
+		modelo.addColumn("FECHA VENTA");
 		modelo.addColumn("UNIDADES");
 
-		tablaArticulos = new JTable(modelo);
-		scrollPane.setViewportView(tablaArticulos);
+		tablaVentas = new JTable(modelo);
+		scrollPane.setViewportView(tablaVentas);
 
 		return modelo;
 	}
 
-	private void rellenaTablaArticulosSeleccionandoNIF(DefaultTableModel modelo, String nif) {
+	private DefaultTableModel construyeModeloTablaArticulosPedidos(JScrollPane scrollPane) {
+
+		DefaultTableModel modelo = new DefaultTableModel();
+
+		modelo.addColumn("NIF");
+		modelo.addColumn("ARTICULO");
+		modelo.addColumn("FABRICANTE");
+		modelo.addColumn("PESO");
+		modelo.addColumn("CATEGORIA");
+		modelo.addColumn("FECHA PEDIDO");
+		modelo.addColumn("UNIDADES");
+
+		tablaPedidos = new JTable(modelo);
+		scrollPane.setViewportView(tablaPedidos);
+
+		return modelo;
+	}
+
+	private void rellenaTablaArticulosVentasSeleccionandoNIF(DefaultTableModel modelo, String nif) {
 
 		ArrayList<Object[]> datos = new ArrayList<Object[]>();
 
 		datos = miConexion.rellenaTablaVentas(nif);
+
+		for (int i = 0; i < datos.size(); i++) {
+			modelo.addRow(datos.get(i));
+		}
+	}
+
+	private void rellenaTablaArticulosPedidosSeleccionandoNIF(DefaultTableModel modelo, String nif) {
+
+		ArrayList<Object[]> datos = new ArrayList<Object[]>();
+
+		datos = miConexion.rellenaTablaPedidos(nif);
 
 		for (int i = 0; i < datos.size(); i++) {
 			modelo.addRow(datos.get(i));
@@ -185,17 +239,17 @@ public class Ejercicio1 extends JFrame {
 	}
 
 	/**
-	 * Acción del ComboBox, trocea el String para obtener un nif y se lo pasa a
-	 * una consulta preparada para optener articulos por nif de tienda
+	 * Acción del ComboBox, trocea el String para obtener un nif y se lo pasa a una
+	 * consulta preparada para optener articulos por nif de tienda
 	 * 
 	 * @param cboxTiendas
 	 * @param scrollPane
 	 */
-	private void accionComboBox(JComboBox<String> cboxTiendas, JScrollPane scrollPane) {
+	private void accionComboBoxVentasSeleccionado(JComboBox<String> cboxTiendas, JScrollPane scrollPane) {
 		// Creamos un modelos contruyendolo a traves de nuestro metodo
 		// construyeModeloTablaArticulos
 
-		DefaultTableModel modelo = construyeModeloTablaArticulos(scrollPane);
+		DefaultTableModel modelo = construyeModeloTablaArticulosVentas(scrollPane);
 
 		modelo.setRowCount(0); // Borra lo que hay en la tabla
 
@@ -203,8 +257,28 @@ public class Ejercicio1 extends JFrame {
 
 		String nif = troceaNIF(cboxTiendas).trim();
 
-		// Rellenamos la tabla pasandole el modelo y el strig almacenado
+		// Rellenamos la tabla pasandole el modelo y el string almacenado
 
-		rellenaTablaArticulosSeleccionandoNIF(modelo, nif);
+		rellenaTablaArticulosVentasSeleccionandoNIF(modelo, nif);
+
 	}
+
+	private void accionComboBoxPedidosSeleccionado(JComboBox<String> cboxTiendas, JScrollPane scrollPane) {
+		// Creamos un modelos contruyendolo a traves de nuestro metodo
+		// construyeModeloTablaArticulos
+
+		DefaultTableModel modelo = construyeModeloTablaArticulosPedidos(scrollPane);
+
+		modelo.setRowCount(0); // Borra lo que hay en la tabla
+
+		// Almacenamos el string obtenido de nuestro metodo troceaNIF
+
+		String nif = troceaNIF(cboxTiendas).trim();
+
+		// Rellenamos la tabla pasandole el modelo y el string almacenado
+
+		rellenaTablaArticulosPedidosSeleccionandoNIF(modelo, nif);
+
+	}
+
 }
